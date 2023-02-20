@@ -20,7 +20,7 @@ library(ggpubr)
 
 ## Load Data
 ```{r}
-data <- read_csv('C:/Users/paxto/OneDrive/Documents/R/BME580_Gopisetty_Larbie_Piper/data/adult21.csv')
+data <- read_csv('data/adult21.csv')
 ```
 
 ## Native Born Compared to Non-Native Born Covid Diagnosis
