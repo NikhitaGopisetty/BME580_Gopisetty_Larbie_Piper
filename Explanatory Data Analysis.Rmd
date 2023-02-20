@@ -1,0 +1,57 @@
+---
+title: "Exploratory Data Analysis"
+author: "Michael Larbie, Sarah Piper, Nikhita Gopisetty"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##Import Packagaes
+```{r}
+library(dplyr)
+library(ggplot2)
+library(viridis)
+library(webr)
+```
+
+## Load Data
+```{r}
+data <- read_csv('C:/Users/paxto/OneDrive/Documents/R/BME580_Gopisetty_Larbie_Piper/data/adult21.csv')
+```
+
+## Native Born Compared to Non-Native Born
+```{r}
+data$NATUSBORN_A <- as.factor(data$NATUSBORN_A)
+
+ggplot(data,aes(x = NATUSBORN_A)) +
+geom_bar() + labs(title = "Native v Non-Native Born", x = "Origin of Birth",
+                  y = "Number of Respondents")
+```
+
+## Region Positive Covid Diagnosis
+```{r}
+data$REGION <- as.factor(data$REGION)
+data$CVDDIAG_A <- as.factor(data$CVDDIAG_A)
+
+data %>% count(REGION,CVDDIAG_A) %>% 
+  ggplot(aes(fill = CVDDIAG_A, x = REGION, y = n)) +
+  geom_bar(position = "stack", stat = "identity") +
+  labs(title = "Region Positive Covid Diagnosis", x = "Region",
+       y = "Number of Respondents")
+```
+
+## 
+```{r}
+data$HYPEV_A <- as.factor(data$HYPEV_A)
+
+data %>% count(HYPEV_A,CVDDIAG_A) %>% 
+  ggplot(aes(fill = CVDDIAG_A, x = HYPEV_A, y = n)) +
+  geom_bar(position = "stack", stat = "identity") +
+  labs(title = "Hypertension and Covid Diagnosis", x = "Hypertension",
+       y = "Number of Respondents")
+
+```
+
