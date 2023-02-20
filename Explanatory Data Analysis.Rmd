@@ -14,7 +14,8 @@ knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
 library(ggplot2)
 library(viridis)
-library(webr)
+library(ggpubr)
+
 ```
 
 ## Load Data
@@ -22,36 +23,107 @@ library(webr)
 data <- read_csv('C:/Users/paxto/OneDrive/Documents/R/BME580_Gopisetty_Larbie_Piper/data/adult21.csv')
 ```
 
-## Native Born Compared to Non-Native Born
+## Native Born Compared to Non-Native Born Covid Diagnosis
 ```{r}
 data$NATUSBORN_A <- as.factor(data$NATUSBORN_A)
+data$CVDDIAG_A <- as.factor(data$CVDDIAG_A)
 
-ggplot(data,aes(x = NATUSBORN_A)) +
-geom_bar() + labs(title = "Native v Non-Native Born", x = "Origin of Birth",
+data %>% count(NATUSBORN_A,CVDDIAG_A) %>%
+ggplot(aes(fill = CVDDIAG_A, x = NATUSBORN_A, y =n)) +
+geom_bar(position = "stack", stat = "identity") + labs(title = "Native v Non-Native Born", x = "Origin of Birth",
                   y = "Number of Respondents")
 ```
 
 ## Region Positive Covid Diagnosis
 ```{r}
 data$REGION <- as.factor(data$REGION)
-data$CVDDIAG_A <- as.factor(data$CVDDIAG_A)
+
 
 data %>% count(REGION,CVDDIAG_A) %>% 
-  ggplot(aes(fill = CVDDIAG_A, x = REGION, y = n)) +
-  geom_bar(position = "stack", stat = "identity") +
-  labs(title = "Region Positive Covid Diagnosis", x = "Region",
+  ggplot(aes(fill = REGION, x = CVDDIAG_A, y = n)) +
+  geom_bar(position = "dodge", stat = "identity") +
+  labs(title = "Region Positive Covid Diagnosis", x = "Covid Diagnosis",
        y = "Number of Respondents")
 ```
 
-## 
+## Diseases and Covid Diagnosis
 ```{r}
 data$HYPEV_A <- as.factor(data$HYPEV_A)
+data$CHLEV_A <- as.factor(data$CHLEV_A)
+data$ASEV_A <- as.factor(data$ASEV_A)
+data$DIBEV_A <- as.factor(data$DIBEV_A)
 
-data %>% count(HYPEV_A,CVDDIAG_A) %>% 
+hypertension <- data %>% count(HYPEV_A,CVDDIAG_A) %>% 
   ggplot(aes(fill = CVDDIAG_A, x = HYPEV_A, y = n)) +
   geom_bar(position = "stack", stat = "identity") +
   labs(title = "Hypertension and Covid Diagnosis", x = "Hypertension",
        y = "Number of Respondents")
 
+cholesterol <- data %>% count(CHLEV_A,CVDDIAG_A) %>% 
+  ggplot(aes(fill = CVDDIAG_A, x = CHLEV_A, y = n)) +
+  geom_bar(position = "stack", stat = "identity") +
+  labs(title = "Cholesterol and Covid Diagnosis", x = "Cholesterol",
+       y = "Number of Respondents")
+
+asthma <- data %>% count(ASEV_A,CVDDIAG_A) %>% 
+  ggplot(aes(fill = CVDDIAG_A, x = ASEV_A, y = n)) +
+  geom_bar(position = "stack", stat = "identity") +
+  labs(title = "Asthma and Covid Diagnosis", x = "Asthma",
+       y = "Number of Respondents")
+
+diabetes <- data %>% count(DIBEV_A,CVDDIAG_A) %>% 
+  ggplot(aes(fill = CVDDIAG_A, x = DIBEV_A, y = n)) +
+  geom_bar(position = "stack", stat = "identity") +
+  labs(title = "Diabetes and Covid Diagnosis", x = "Diabetes",
+       y = "Number of Respondents")
+
+ggarrange(hypertension, cholesterol, asthma, diabetes, nrow = 2, ncol = 2 )
+```
+
+## Social Determinants and Covid Diagnosis
+```{r}
+data$MEDNG12M_A <- as.factor(data$MEDNG12M_A)
+data$PAYWORRY_A <- as.factor(data$PAYWORRY_A)
+data$FDSRUNOUT_A <- as.factor(data$FDSRUNOUT_A)
+
+data %>% count(MEDNG12M_A,CVDDIAG_A) %>% 
+ggplot(aes(fill = CVDDIAG_A, x = MEDNG12M_A, y = n)) +
+geom_bar(position = "stack", stat = "identity") +
+labs(title = "Access to Care and Covid Diagnosis", x = "Access to Care",
+       y = "Number of Respondents")
+
+data %>% count(PAYWORRY_A,CVDDIAG_A) %>% 
+ggplot(aes(fill = CVDDIAG_A, x = PAYWORRY_A, y = n)) +
+geom_bar(position = "stack", stat = "identity") +
+labs(title = "Ability to Pay for Healthcare and Covid Diagnosis", x = "Paying for Healthcare",
+       y = "Number of Respondents")
+
+data %>% count(FDSRUNOUT_A,CVDDIAG_A) %>% 
+ggplot(aes(fill = CVDDIAG_A, x = FDSRUNOUT_A, y = n)) +
+geom_bar(position = "stack", stat = "identity") +
+labs(title = "Food Security and Covid Diagnosis", x = "Food Security",
+       y = "Number of Respondents")
+```
+
+## Race and Covid Diagnois
+```{r}
+data$RACEALLP_A <- as.factor(data$RACEALLP_A)
+
+data %>% count(RACEALLP_A,CVDDIAG_A) %>% 
+ggplot(aes(fill = CVDDIAG_A, x = RACEALLP_A, y = n)) +
+geom_bar(position = "stack", stat = "identity") +
+labs(title = "Race and Covid Diagnosis", x = "Covid Diagnosis",
+       y = "Number of Respondents")
+```
+
+## Sex and Covid Diagnosis
+```{r}
+data$SEX_A <- as.factor(data$SEX_A)
+
+data %>% count(SEX_A,CVDDIAG_A) %>% 
+ggplot(aes(fill = SEX_A, x = CVDDIAG_A, y = n)) +
+geom_bar(position = "dodge", stat = "identity") +
+labs(title = "Race and Covid Diagnosis", x = "Covid Diagnosis",
+       y = "Number of Respondents")
 ```
 
