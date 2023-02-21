@@ -1,8 +1,12 @@
-cff-version: 1.0.0
+cff-version: 1.2.0
 message: "BME 580 Final Project - Project Proposal"
 authors:
-  - family-names: Gopisetty, Larbie, Piper
-    given-names: Nikhita, Michael, Sarah
+  - family-names: "Gopisetty"
+    given-names: "Nikhita"
+  - family-names: "Larbie"
+    given-names: "Michael"
+  - family-names: "Piper"
+    given-names: "Sarah"
 title: "BME 580 Final Project"
 version: 1.0.0
 date-released: 2023-02-20
