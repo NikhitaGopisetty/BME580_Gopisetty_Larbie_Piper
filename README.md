@@ -17,7 +17,7 @@ https://www.cdc.gov/nchs/nhis/data-questionnaires-documentation.htm
 
 
 # Variables
-In doing our analysis we used 11 of the variables. Those variables being
+In doing our analysis we used 11 of the variables. Those variables being:
 1. REGION - Household Region
 	1. Northeast
 	2. Midwest
