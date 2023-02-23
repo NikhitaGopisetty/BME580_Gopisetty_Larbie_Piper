@@ -10,7 +10,7 @@ Northeast, Midwest, South, and West regions of the US. We will study adults’ d
 and comorbidities to determine how a person’s susceptibility to these different factors impacted susceptibility to COVID-19 infection.
 
 
-#Data
+# Data
 This data was collected from the 2021 National Health Interview Survery (NHIS).
 The dataset was combrised of 29,582 observations and 622 variables.
 
