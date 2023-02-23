@@ -13,6 +13,7 @@ and comorbidities to determine how a person’s susceptibility to these differen
 # Data
 This data was collected from the 2021 National Health Interview Survery (NHIS).
 The dataset was combrised of 29,582 observations and 622 variables.
+https://www.cdc.gov/nchs/nhis/data-questionnaires-documentation.htm
 
 
 # Variables
