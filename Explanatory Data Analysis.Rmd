@@ -2,25 +2,27 @@
 title: "Exploratory Data Analysis"
 author: "Michael Larbie, Sarah Piper, Nikhita Gopisetty"
 date: "`r Sys.Date()`"
-output: pdf_document
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+  word_document: default
 ---
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 
 ##Import Packagaes
 ```{r}
 library(dplyr)
+library(tidyverse)
 library(ggplot2)
 library(viridis)
 library(ggpubr)
-
+library(FactoMineR)
+library(factoextra)
 ```
 
 ## Load Data
 ```{r}
-data <- read_csv('C:/Users/paxto/OneDrive/Documents/R/BME580_Gopisetty_Larbie_Piper/data/adult21.csv')
+data <- read_csv('data/adult21.csv')
 ```
 
 ## Native Born Compared to Non-Native Born Covid Diagnosis
@@ -30,7 +32,8 @@ data$CVDDIAG_A <- as.factor(data$CVDDIAG_A)
 
 data %>% count(NATUSBORN_A,CVDDIAG_A) %>%
 ggplot(aes(fill = CVDDIAG_A, x = NATUSBORN_A, y =n)) +
-geom_bar(position = "stack", stat = "identity") + labs(title = "Native v Non-Native Born", x = "Origin of Birth",
+geom_bar(position = "fill", stat = "identity") + 
+  labs(title = "Native v Non-Native Born", x = "Origin of Birth",
                   y = "Number of Respondents")
 ```
 
@@ -44,6 +47,12 @@ data %>% count(REGION,CVDDIAG_A) %>%
   geom_bar(position = "dodge", stat = "identity") +
   labs(title = "Region Positive Covid Diagnosis", x = "Covid Diagnosis",
        y = "Number of Respondents")
+
+data %>% count(NATUSBORN_A,REGION) %>% 
+  ggplot(aes(fill = NATUSBORN_A, x = REGION, y = n)) +
+  geom_bar(position = "dodge", stat = "identity") +
+  labs(title = "Regional Nativity Status", x = "Region",
+       y = "Number of Respondents")
 ```
 
 ## Diseases and Covid Diagnosis
@@ -53,77 +62,156 @@ data$CHLEV_A <- as.factor(data$CHLEV_A)
 data$ASEV_A <- as.factor(data$ASEV_A)
 data$DIBEV_A <- as.factor(data$DIBEV_A)
 
-hypertension <- data %>% count(HYPEV_A,CVDDIAG_A) %>% 
-  ggplot(aes(fill = CVDDIAG_A, x = HYPEV_A, y = n)) +
-  geom_bar(position = "stack", stat = "identity") +
-  labs(title = "Hypertension and Covid Diagnosis", x = "Hypertension",
-       y = "Number of Respondents")
+hypertension <- data %>% count(HYPEV_A,CVDDIAG_A, NATUSBORN_A) %>% 
+  ggplot(aes(fill = HYPEV_A, x = NATUSBORN_A, y = n)) +
+  geom_bar(position = "fill", stat = "identity") +
+  facet_wrap(~ CVDDIAG_A) +
+  labs(title = "Hypertension and Covid Diagnosis", x = "Nativity",
+       y = "Fraction of Respondents")
 
-cholesterol <- data %>% count(CHLEV_A,CVDDIAG_A) %>% 
-  ggplot(aes(fill = CVDDIAG_A, x = CHLEV_A, y = n)) +
-  geom_bar(position = "stack", stat = "identity") +
-  labs(title = "Cholesterol and Covid Diagnosis", x = "Cholesterol",
-       y = "Number of Respondents")
+cholesterol <- data %>% count(CHLEV_A,CVDDIAG_A, NATUSBORN_A) %>% 
+  ggplot(aes(fill = CHLEV_A, x = NATUSBORN_A, y = n)) +
+  geom_bar(position = "fill", stat = "identity") +
+  facet_wrap(~ CVDDIAG_A) +
+  labs(title = "Cholesterol and Covid Diagnosis", x = "Nativity",
+       y = "Fraciton of Respondents")
 
-asthma <- data %>% count(ASEV_A,CVDDIAG_A) %>% 
-  ggplot(aes(fill = CVDDIAG_A, x = ASEV_A, y = n)) +
-  geom_bar(position = "stack", stat = "identity") +
-  labs(title = "Asthma and Covid Diagnosis", x = "Asthma",
-       y = "Number of Respondents")
 
-diabetes <- data %>% count(DIBEV_A,CVDDIAG_A) %>% 
-  ggplot(aes(fill = CVDDIAG_A, x = DIBEV_A, y = n)) +
-  geom_bar(position = "stack", stat = "identity") +
-  labs(title = "Diabetes and Covid Diagnosis", x = "Diabetes",
-       y = "Number of Respondents")
+asthma <- data %>% count(ASEV_A,CVDDIAG_A, NATUSBORN_A) %>% 
+  ggplot(aes(fill = ASEV_A, x = NATUSBORN_A, y = n)) +
+  geom_bar(position = "fill", stat = "identity") +
+  facet_wrap(~ CVDDIAG_A)+
+  labs(title = "Asthma and Covid Diagnosis", x = "Nativity",
+       y = "Fraction of Respondents")
+
+
+diabetes <- data %>% count(DIBEV_A,CVDDIAG_A, NATUSBORN_A) %>% 
+  ggplot(aes(fill = DIBEV_A, x = NATUSBORN_A, y = n)) +
+  geom_bar(position = "fill", stat = "identity") +
+  facet_wrap(~ CVDDIAG_A)+
+  labs(title = "Diabetes and Covid Diagnosis", x = "Nativity",
+       y = "Fraction of Respondents")
 
 ggarrange(hypertension, cholesterol, asthma, diabetes, nrow = 2, ncol = 2 )
 ```
 
-## Social Determinants and Covid Diagnosis
+## Social Determinants, Nativity, COVID
 ```{r}
 data$MEDNG12M_A <- as.factor(data$MEDNG12M_A)
 data$PAYWORRY_A <- as.factor(data$PAYWORRY_A)
 data$FDSRUNOUT_A <- as.factor(data$FDSRUNOUT_A)
 
-data %>% count(MEDNG12M_A,CVDDIAG_A) %>% 
-ggplot(aes(fill = CVDDIAG_A, x = MEDNG12M_A, y = n)) +
-geom_bar(position = "stack", stat = "identity") +
+data %>% count(MEDNG12M_A,NATUSBORN_A, CVDDIAG_A) %>% 
+ggplot(aes(fill = MEDNG12M_A, x = NATUSBORN_A, y = n)) +
+geom_bar(position = "fill", stat = "identity") +
+facet_wrap(~CVDDIAG_A) +
 labs(title = "Access to Care and Covid Diagnosis", x = "Access to Care",
        y = "Number of Respondents")
 
-data %>% count(PAYWORRY_A,CVDDIAG_A) %>% 
-ggplot(aes(fill = CVDDIAG_A, x = PAYWORRY_A, y = n)) +
-geom_bar(position = "stack", stat = "identity") +
-labs(title = "Ability to Pay for Healthcare and Covid Diagnosis", x = "Paying for Healthcare",
+data %>% count(PAYWORRY_A, NATUSBORN_A, CVDDIAG_A) %>% 
+ggplot(aes(fill = PAYWORRY_A, x = NATUSBORN_A, y = n)) +
+geom_bar(position = "fill", stat = "identity") +
+facet_wrap(~CVDDIAG_A) +
+labs(title = "Ability to Pay for Healthcare and Covid Diagnosis", 
+     x = "Nativity",
        y = "Number of Respondents")
 
-data %>% count(FDSRUNOUT_A,CVDDIAG_A) %>% 
-ggplot(aes(fill = CVDDIAG_A, x = FDSRUNOUT_A, y = n)) +
-geom_bar(position = "stack", stat = "identity") +
-labs(title = "Food Security and Covid Diagnosis", x = "Food Security",
+data %>% count(FDSRUNOUT_A,NATUSBORN_A, CVDDIAG_A) %>% 
+ggplot(aes(fill = FDSRUNOUT_A, x = NATUSBORN_A, y = n)) +
+geom_bar(position = "fill", stat = "identity") +
+facet_wrap(~CVDDIAG_A) +
+labs(title = "Food Security and Nativity", x = "Nativity",
        y = "Number of Respondents")
 ```
 
-## Race and Covid Diagnois
+## Race, Nativity, Covid
 ```{r}
 data$RACEALLP_A <- as.factor(data$RACEALLP_A)
 
-data %>% count(RACEALLP_A,CVDDIAG_A) %>% 
-ggplot(aes(fill = CVDDIAG_A, x = RACEALLP_A, y = n)) +
-geom_bar(position = "stack", stat = "identity") +
-labs(title = "Race and Covid Diagnosis", x = "Covid Diagnosis",
-       y = "Number of Respondents")
+data %>% mutate(race = case_when(RACEALLP_A == 1 ~ "White",
+                                RACEALLP_A == 2 ~ "Black",
+                                RACEALLP_A == 3 ~ "Asian",
+                                RACEALLP_A == 8 ~ "Latino")) %>% 
+mutate(immigrant = case_when(NATUSBORN_A == 1 ~ "Native",
+                                NATUSBORN_A == 2 ~ "Immigrant"))%>%
+mutate(covid = case_when(CVDDIAG_A == 1 ~ "Positive",
+                             CVDDIAG_A == 2 ~ "Negative")) %>%
+drop_na(race, immigrant, covid) %>%
+count(race, immigrant, covid) %>%
+ggplot(aes(fill = covid, x = race, y = n)) +
+geom_bar(position = "fill", stat = "identity") +
+facet_wrap(~ immigrant) +
+labs(title = "Relationship Between Race, Immigration and Covid Diagnosis", 
+     x = "Race",
+     y = "Fraction of Respondents")
+ggsave("EDA.png")
 ```
+In our EDA we wanted to find trends mainly between three categorical groups that
+being immigration, COVID-19 diagnosis and a third variable. In doing our EDA as 
+can be seen in figure 1 across all racial groups, those of non US birth or 
+immigrants had a higher percentage of their sample population being positive for
+COVID compared to their, US born counter parts.This same trend was found when 
+comparing social determinants, immigration status and COVID diagnosis. For 
+access to care, difficulty paying for healthcare and food security, immigrants 
+always had a higher percentage of their population with COVID, who felt at 
+higher risk of not getting these basic necessities compared to their US born 
+counterparts. Diabetes and high cholesterol followed this trend as well, but 
+with just slightly higher percentages of their population having the disease
+prior to having COVID compared to their US born counterparts.
+This trend could not be seen with different pre-conditions as the 
+third variable, these diseases being asthma and hypertension. The immigrant 
+population had the same or sometimes lower percentages of their population with 
+the disease who also had COVID. In doing this EDA we discovered that immigrant
+status does have an affect on COVID diagnosis and does influence all social
+determinant variables used in the EDA. While it seems to have little affect on 
+pre conditions. Our group will need to reconsider the pre-condition variables 
+used in our data set and see if there are other preconditions in the data set
+which have more of a relationship with nativity and COVID. We will have to
+do some pre-processing to get rid of results that are not needed for our 
+analysis such as for option in the survey for people whole refused to give up 
+some information or did not know the information. There were no NA's in the
+variables we used so that is not something we need to worry about.
 
-## Sex and Covid Diagnosis
+## MCA
 ```{r}
-data$SEX_A <- as.factor(data$SEX_A)
-
-data %>% count(SEX_A,CVDDIAG_A) %>% 
-ggplot(aes(fill = SEX_A, x = CVDDIAG_A, y = n)) +
-geom_bar(position = "dodge", stat = "identity") +
-labs(title = "Race and Covid Diagnosis", x = "Covid Diagnosis",
-       y = "Number of Respondents")
+data2 <- data %>% select(REGION, CVDDIAG_A, NATUSBORN_A, RACEALLP_A,MEDNG12M_A,
+                         PAYWORRY_A, FDSRUNOUT_A, DIBEV_A, ASEV_A, CHLEV_A,
+                         HYPEV_A) %>% 
+  filter(NATUSBORN_A == 1 | NATUSBORN_A == 2, MEDNG12M_A ==1 | MEDNG12M_A == 2,
+         PAYWORRY_A == 1 | PAYWORRY_A == 2 | PAYWORRY_A == 3, 
+         FDSRUNOUT_A == 1 | FDSRUNOUT_A == 2 | FDSRUNOUT_A == 3,
+         CVDDIAG_A == 1 | CVDDIAG_A == 2, DIBEV_A == 1 | DIBEV_A == 2,
+         ASEV_A == 1 | ASEV_A == 2, CHLEV_A == 1 | CHLEV_A == 2, 
+         HYPEV_A == 1 | HYPEV_A == 2)
+  
+res <- MCA(data2)
+fviz_mca_var(res, 
+            repel = TRUE, # Avoid text overlapping (slow)
+            ggtheme = theme_minimal()) 
+ggsave("MCA.png")
 ```
 
+Our group also conducted a Multiple Correspondence Analysis on the different 
+variables we intended to use in our research to find which variables had the 
+most similar profiles in the sampled population used. By doing the MCA we 
+wanted to find which variables would be useful in helping to understand our 
+hypothesis and which variables we selected had no significant impact. When 
+interpreting MCA variable categories closer together tend to share similar 
+responses among the population. From conducting our MCA and as can be seen in 
+figure 2 it was found that the negative COVID diagnosis variable or CVDDIAG_A_2 
+shared similar profiles to those without diabetes, asthma, and high cholesterol.
+The negative COVID diagnosis variable also shared similar profiles to those 
+who did not worry about food security, where able to get medical care
+regardless of cost and where somewhat worried about being able to pay medical
+bills. The variable positive COVID diagnosis or CVDDIAG_A_1 did not have any 
+close relationships with other variables. From our MCA we concluded that the 
+lack of prior health risks was more associated with not getting COVID, while on
+the other hand there did not seem to be any correlation between having these 
+prior health risks and being more likely to get COVID. The same sentiment can be
+used on social determinants those with a lower risk of having food security,
+access to care and ability to afford health share a similar profile to a 
+negative COVID diagnosis, while those at higher risk do not share that same
+profile with a positive COVID diagnosis. Looking at the MCA there was a much
+closer relationship between those born in the US (NATUSBORN_A_1) and a negative
+COVID diagnosis, than compared to those born outside the US and a positive 
+COVID diagnosis.
