@@ -140,10 +140,11 @@ drop_na(race, immigrant, covid) %>%
 count(race, immigrant, covid) %>%
 ggplot(aes(fill = covid, x = race, y = n)) +
 geom_bar(position = "fill", stat = "identity") +
-facet_wrap(~ immigrant)+
+facet_wrap(~ immigrant) +
 labs(title = "Relationship Between Race, Immigration and Covid Diagnosis", 
      x = "Race",
      y = "Fraction of Respondents")
+ggsave("EDA.png")
 ```
 In our EDA we wanted to find trends mainly between three categorical groups that
 being immigration, COVID-19 diagnosis and a third variable. In doing our EDA as 
@@ -186,8 +187,8 @@ data2 <- data %>% select(REGION, CVDDIAG_A, NATUSBORN_A, RACEALLP_A,MEDNG12M_A,
 res <- MCA(data2)
 fviz_mca_var(res, 
             repel = TRUE, # Avoid text overlapping (slow)
-            ggtheme = theme_minimal())
-
+            ggtheme = theme_minimal()) 
+ggsave("MCA.png")
 ```
 
 Our group also conducted a Multiple Correspondence Analysis on the different 
