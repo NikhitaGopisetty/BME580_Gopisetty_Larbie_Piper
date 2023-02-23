@@ -34,7 +34,7 @@ data %>% count(NATUSBORN_A,CVDDIAG_A) %>%
 ggplot(aes(fill = CVDDIAG_A, x = NATUSBORN_A, y =n)) +
 geom_bar(position = "fill", stat = "identity") + 
   labs(title = "Native v Non-Native Born", x = "Origin of Birth",
-                  y = "Number of Respondents")
+                  y = "Fraction of Respondents")
 ```
 
 ## Region Positive Covid Diagnosis
@@ -66,14 +66,14 @@ hypertension <- data %>% count(HYPEV_A,CVDDIAG_A, NATUSBORN_A) %>%
   ggplot(aes(fill = HYPEV_A, x = NATUSBORN_A, y = n)) +
   geom_bar(position = "fill", stat = "identity") +
   facet_wrap(~ CVDDIAG_A) +
-  labs(title = "Hypertension and Covid Diagnosis", x = "Nativity",
+  labs(title = "Hypertension, Nativity and COVID", x = "Nativity",
        y = "Fraction of Respondents")
 
 cholesterol <- data %>% count(CHLEV_A,CVDDIAG_A, NATUSBORN_A) %>% 
   ggplot(aes(fill = CHLEV_A, x = NATUSBORN_A, y = n)) +
   geom_bar(position = "fill", stat = "identity") +
   facet_wrap(~ CVDDIAG_A) +
-  labs(title = "Cholesterol and Covid Diagnosis", x = "Nativity",
+  labs(title = "Cholesterol, Nativity, and COVID", x = "Nativity",
        y = "Fraciton of Respondents")
 
 
@@ -81,7 +81,7 @@ asthma <- data %>% count(ASEV_A,CVDDIAG_A, NATUSBORN_A) %>%
   ggplot(aes(fill = ASEV_A, x = NATUSBORN_A, y = n)) +
   geom_bar(position = "fill", stat = "identity") +
   facet_wrap(~ CVDDIAG_A)+
-  labs(title = "Asthma and Covid Diagnosis", x = "Nativity",
+  labs(title = "Asthma, Nativity and COVID", x = "Nativity",
        y = "Fraction of Respondents")
 
 
@@ -89,7 +89,7 @@ diabetes <- data %>% count(DIBEV_A,CVDDIAG_A, NATUSBORN_A) %>%
   ggplot(aes(fill = DIBEV_A, x = NATUSBORN_A, y = n)) +
   geom_bar(position = "fill", stat = "identity") +
   facet_wrap(~ CVDDIAG_A)+
-  labs(title = "Diabetes and Covid Diagnosis", x = "Nativity",
+  labs(title = "Diabetes, Nativity, and COVID", x = "Nativity",
        y = "Fraction of Respondents")
 
 ggarrange(hypertension, cholesterol, asthma, diabetes, nrow = 2, ncol = 2 )
@@ -105,23 +105,23 @@ data %>% count(MEDNG12M_A,NATUSBORN_A, CVDDIAG_A) %>%
 ggplot(aes(fill = MEDNG12M_A, x = NATUSBORN_A, y = n)) +
 geom_bar(position = "fill", stat = "identity") +
 facet_wrap(~CVDDIAG_A) +
-labs(title = "Access to Care and Covid Diagnosis", x = "Access to Care",
-       y = "Number of Respondents")
+labs(title = "Access to Care, NATIVITY, COVID", x = "Nativity",
+       y = "Fraction of Respondents")
 
 data %>% count(PAYWORRY_A, NATUSBORN_A, CVDDIAG_A) %>% 
 ggplot(aes(fill = PAYWORRY_A, x = NATUSBORN_A, y = n)) +
 geom_bar(position = "fill", stat = "identity") +
 facet_wrap(~CVDDIAG_A) +
-labs(title = "Ability to Pay for Healthcare and Covid Diagnosis", 
+labs(title = "Ability to Pay for Healthcare, Nativity, and COVID", 
      x = "Nativity",
-       y = "Number of Respondents")
+       y = "Fraction of Respondents")
 
 data %>% count(FDSRUNOUT_A,NATUSBORN_A, CVDDIAG_A) %>% 
 ggplot(aes(fill = FDSRUNOUT_A, x = NATUSBORN_A, y = n)) +
 geom_bar(position = "fill", stat = "identity") +
 facet_wrap(~CVDDIAG_A) +
-labs(title = "Food Security and Nativity", x = "Nativity",
-       y = "Number of Respondents")
+labs(title = "Food Security, Nativity and COVID", x = "Nativity",
+       y = "Fraction of Respondents")
 ```
 
 ## Race, Nativity, Covid
