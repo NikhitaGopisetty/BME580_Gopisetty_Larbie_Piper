@@ -1,0 +1,75 @@
+---
+title: "Data Cleaning"
+author: "Michael Larbie, Sarah Piper, Nikhita Gopisetty"
+date: "2023-03-27"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r import libraries}
+library(dplyr)
+library(tidyverse)
+library(caret)
+```
+```{r import data}
+raw_data <- read_csv('data/adult21.csv')
+```
+```{r select columns}
+data_select <- raw_data %>%
+  select(REGION, SEX_A, CVDDIAG_A, NATUSBORN_A, RACEALLP_A, MEDNG12M_A,
+         PAYWORRY_A, DIBEV_A, ASEV_A, CHLEV_A, HYPEV_A, MEDRXTRT_A,
+         HLTHCOND_A, DXRESP_A, SMKNOW_A, DEPEV_A) %>% 
+  filter(SEX_A == 1 | SEX_A == 2,
+         CVDDIAG_A == 1 | CVDDIAG_A == 2, 
+         NATUSBORN_A == 1 | NATUSBORN_A == 2,
+         RACEALLP_A == 1 | RACEALLP_A == 2 | RACEALLP_A == 3 | RACEALLP_A == 8,
+         MEDNG12M_A ==1 | MEDNG12M_A == 2,
+         PAYWORRY_A == 1 | PAYWORRY_A == 2 | PAYWORRY_A == 3,
+         DIBEV_A == 1 | DIBEV_A == 2,
+         ASEV_A == 1 | ASEV_A == 2, 
+         CHLEV_A == 1 | CHLEV_A == 2, 
+         HYPEV_A == 1 | HYPEV_A == 2,
+         MEDRXTRT_A == 1 | MEDRXTRT_A == 2,
+         HLTHCOND_A == 1 | HLTHCOND_A == 2,
+         DEPEV_A == 1 | DEPEV_A == 2)
+```
+
+```{r drop na}
+data <- drop_na(data_select)
+str(data)
+```
+
+```{r factor}
+data$NATUSBORN_A <- as.factor(data$NATUSBORN_A)
+data$CVDDIAG_A <- as.factor(data$CVDDIAG_A)
+data$REGION <- as.factor(data$REGION)
+data$HYPEV_A <- as.factor(data$HYPEV_A)
+data$CHLEV_A <- as.factor(data$CHLEV_A)
+data$ASEV_A <- as.factor(data$ASEV_A)
+data$DIBEV_A <- as.factor(data$DIBEV_A)
+data$MEDNG12M_A <- as.factor(data$MEDNG12M_A)
+data$PAYWORRY_A <- as.factor(data$PAYWORRY_A)
+data$RACEALLP_A <- as.factor(data$RACEALLP_A)
+data$DXRESP_A <- as.factor(data$DXRESP_A)
+data$MEDRXTRT_A <- as.factor(data$MEDRXTRT_A)
+data$HLTHCOND_A <- as.factor(data$HLTHCOND_A)
+data$DEPEV_A <- as.factor(data$DEPEV_A)
+str(data)
+```
+
+```{r split data}
+data_split <- createDataPartition(data$CVDDIAG_A, p = 0.8, list = FALSE)
+data_train <- data[data_split,]
+data_test <- data[-data_split,]
+dim(data_train)
+dim(data_test)
+```
+
+```{r export data}
+write.csv(data_train, 'training_data.csv')
+write.csv(data_test, 'testing_data.csv')
+```
+
