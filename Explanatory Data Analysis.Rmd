@@ -189,6 +189,10 @@ fviz_mca_var(res,
             repel = TRUE, # Avoid text overlapping (slow)
             ggtheme = theme_minimal()) 
 ggsave("MCA.png")
+
+#fviz_mca_var(res, choice = "mca.cor", 
+            #repel = TRUE, # Avoid text overlapping (slow)
+            #ggtheme = theme_minimal())
 ```
 
 Our group also conducted a Multiple Correspondence Analysis on the different 

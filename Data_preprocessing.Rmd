@@ -1,0 +1,80 @@
+---
+title: "Data_preprocessing"
+author: "Michael Larbie"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+
+##Import Packagaes
+```{r}
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+library(viridis)
+library(ggpubr)
+library(FactoMineR)
+library(factoextra)
+```
+
+## Load Data
+```{r}
+data <- read_csv('data/adult21.csv')
+```
+
+##MCA
+```{r}
+data$NATUSBORN_A <- as.factor(data$NATUSBORN_A)
+data$CVDDIAG_A <- as.factor(data$CVDDIAG_A)
+data$REGION <- as.factor(data$REGION)
+data$HYPEV_A <- as.factor(data$HYPEV_A)
+data$CHLEV_A <- as.factor(data$CHLEV_A)
+data$ASEV_A <- as.factor(data$ASEV_A)
+data$DIBEV_A <- as.factor(data$DIBEV_A)
+data$MEDNG12M_A <- as.factor(data$MEDNG12M_A)
+data$PAYWORRY_A <- as.factor(data$PAYWORRY_A)
+data$FDSRUNOUT_A <- as.factor(data$FDSRUNOUT_A)
+data$RACEALLP_A <- as.factor(data$RACEALLP_A)
+
+data2 <- data %>% select(REGION, CVDDIAG_A, NATUSBORN_A, RACEALLP_A,MEDNG12M_A,
+                         PAYWORRY_A, FDSRUNOUT_A, DIBEV_A, ASEV_A, CHLEV_A,
+                         HYPEV_A) %>% 
+  filter(NATUSBORN_A == 1 | NATUSBORN_A == 2, MEDNG12M_A ==1 | MEDNG12M_A == 2,
+         PAYWORRY_A == 1 | PAYWORRY_A == 2 | PAYWORRY_A == 3, 
+         FDSRUNOUT_A == 1 | FDSRUNOUT_A == 2 | FDSRUNOUT_A == 3,
+         CVDDIAG_A == 1 | CVDDIAG_A == 2, DIBEV_A == 1 | DIBEV_A == 2,
+         ASEV_A == 1 | ASEV_A == 2, CHLEV_A == 1 | CHLEV_A == 2, 
+         HYPEV_A == 1 | HYPEV_A == 2)
+  
+res <- MCA(data2)
+fviz_mca_var(res, 
+            repel = TRUE, # Avoid text overlapping (slow)
+            ggtheme = theme_minimal()) 
+ggsave("MCA.png")
+```
+
+
+```{r}
+data$DXRESP_A <- as.factor(data$DXRESP_A)
+data$MEDRXTRT_A <- as.factor(data$MEDRXTRT_A)
+data$HLTHCOND_A <- as.factor(data$HLTHCOND_A)
+data$SMKNOW_A <- as.factor(data$SMKNOW_A)
+data$CIGARCUR_A <- as.factor(data$CIGARCUR_A)
+data$ECIGNOW_A <- as.factor(data$ECIGNOW_A)
+data$DEPEV_A <- as.factor(data$DEPEV_A)
+
+data3 <- data %>% select(CVDDIAG_A, DXRESP_A, , MEDRXTRT_A, HLTHCOND_A, 
+                         SMKNOW_A, CIGARCUR_A, ECIGNOW_A, DEPEV_A) %>% 
+  filter(CVDDIAG_A == 1 | CVDDIAG_A == 2, DXRESP_A == 1 | DXRESP_A == 2, 
+         MEDRXTRT_A ==1 | MEDRXTRT_A == 2,
+         HLTHCOND_A == 1 | HLTHCOND_A == 2, SMKNOW_A == 1 | SMKNOW_A == 2 
+         | SMKNOW_A == 3, CIGARCUR_A == 1 | CIGARCUR_A == 2 | CIGARCUR_A == 3, 
+         ECIGNOW_A == 1 | ECIGNOW_A == 2 | ECIGNOW_A == 3,
+         DEPEV_A == 1 | DEPEV_A == 2)
+  
+res2 <- MCA(data3)
+fviz_mca_var(res2, 
+            repel = TRUE, # Avoid text overlapping (slow)
+            ggtheme = theme_minimal()) 
+```
+
