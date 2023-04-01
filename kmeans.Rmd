@@ -1,0 +1,30 @@
+---
+title: "kmeans"
+author: "Nikhita Gopisetty"
+date: "2023-04-01"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(factoextra)
+```
+
+```{r}
+training_data <- read.csv('training_data.csv')
+x <- training_data %>% select(-CVDDIAG_A)
+y <- training_data$CVDDIAG_A
+```
+
+```{r}
+kmeans1 = kmeans(x, center=4, iter.max=10, nstart=1)
+#names(kmeans1)
+#kmeans1
+```
+```{r}
+fviz_cluster(kmeans1, x)
+```
+```{r}
+kmeansTab = table(kmeans1$cluster, y)
+kmeansTab
+```
