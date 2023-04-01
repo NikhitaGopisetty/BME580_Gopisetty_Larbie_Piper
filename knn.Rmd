@@ -1,0 +1,33 @@
+---
+title: "knn"
+author: "Nikhita Gopisetty"
+date: "2023-04-01"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(corrplot)
+library(utils)
+library(MASS)
+library(ROCR)
+library(caret)
+library(gmodels)
+library(class) # Knn algorithm
+library(patchwork)
+library(psych)
+```
+
+```{r}
+training_data <- read.csv('training_data.csv')
+testing_data <- read.csv('testing_data.csv')
+```
+
+```{r}
+knn_model = knn(training_data, testing_data, cl = training_data$CVDDIAG_A, k=2)
+tab_knn = table(knn_model, testing_data$CVDDIAG_A)
+
+(tab_knn[2] + tab_knn[3]) / (tab_knn[1] + tab_knn[2] + tab_knn[3] + tab_knn[4])
+tab_knn
+```

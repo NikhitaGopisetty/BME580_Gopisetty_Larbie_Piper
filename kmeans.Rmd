@@ -17,6 +17,10 @@ y <- training_data$CVDDIAG_A
 ```
 
 ```{r}
+fviz_nbclust(training_data, kmeans, method = "wss")
+```
+
+```{r}
 kmeans1 = kmeans(x, center=4, iter.max=10, nstart=1)
 #names(kmeans1)
 #kmeans1
@@ -28,3 +32,4 @@ fviz_cluster(kmeans1, x)
 kmeansTab = table(kmeans1$cluster, y)
 kmeansTab
 ```
+
