@@ -39,7 +39,6 @@ training_data$DIBEV_A <- as.factor(training_data$DIBEV_A)
 training_data$MEDNG12M_A <- as.factor(training_data$MEDNG12M_A)
 training_data$PAYWORRY_A <- as.factor(training_data$PAYWORRY_A)
 training_data$RACEALLP_A <- as.factor(training_data$RACEALLP_A)
-training_data$DXRESP_A <- as.factor(training_data$DXRESP_A)
 training_data$MEDRXTRT_A <- as.factor(training_data$MEDRXTRT_A)
 training_data$HLTHCOND_A <- as.factor(training_data$HLTHCOND_A)
 training_data$DEPEV_A <- as.factor(training_data$DEPEV_A)
@@ -60,7 +59,6 @@ testing_data$DIBEV_A <- as.factor(testing_data$DIBEV_A)
 testing_data$MEDNG12M_A <- as.factor(testing_data$MEDNG12M_A)
 testing_data$PAYWORRY_A <- as.factor(testing_data$PAYWORRY_A)
 testing_data$RACEALLP_A <- as.factor(testing_data$RACEALLP_A)
-testing_data$DXRESP_A <- as.factor(testing_data$DXRESP_A)
 testing_data$MEDRXTRT_A <- as.factor(testing_data$MEDRXTRT_A)
 testing_data$HLTHCOND_A <- as.factor(testing_data$HLTHCOND_A)
 testing_data$DEPEV_A <- as.factor(testing_data$DEPEV_A)
@@ -102,7 +100,7 @@ accuracy(actual = testing_data$CVDDIAG_A,
 
 ```{r}
 set.seed(42)
-k_to_try = 1:100
+k_to_try = 1:10
 acc_k = rep(x = 0, times = length(k_to_try))
 
 accuracy = function(actual, predicted) {
