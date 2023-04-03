@@ -1,0 +1,56 @@
+---
+title: "lda"
+author: "Sarah Piper"
+date: "2023-04-02"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(MASS) 
+library(tidyverse)
+library(caret) 
+library(corrplot)
+```
+
+```{r}
+data_train = read.csv('training_data.csv')
+data_train$NATUSBORN_A <- as.factor(data_train$NATUSBORN_A)
+data_train$SEX_A <- as.factor(data_train$NATUSBORN_A)
+data_train$CVDDIAG_A <- as.factor(data_train$CVDDIAG_A)
+data_train$REGION <- as.factor(data_train$REGION)
+data_train$HYPEV_A <- as.factor(data_train$HYPEV_A)
+data_train$CHLEV_A <- as.factor(data_train$CHLEV_A)
+data_train$ASEV_A <- as.factor(data_train$ASEV_A)
+data_train$DIBEV_A <- as.factor(data_train$DIBEV_A)
+data_train$MEDNG12M_A <- as.factor(data_train$MEDNG12M_A)
+data_train$PAYWORRY_A <- as.factor(data_train$PAYWORRY_A)
+data_train$RACEALLP_A <- as.factor(data_train$RACEALLP_A)
+data_train$MEDRXTRT_A <- as.factor(data_train$MEDRXTRT_A)
+data_train$HLTHCOND_A <- as.factor(data_train$HLTHCOND_A)
+data_train$DEPEV_A <- as.factor(data_train$DEPEV_A)
+str(data_train)
+
+data_test = read.csv('testing_data.csv')
+```
+
+Create LDA model. 
+```{r}
+ldaMod = lda(x ~., data = data_train)
+ldaMod
+
+ldaPred = predict(ldaMod, data_test)
+```
+
+Create histogram of scores of each observation in the first linear discrimminant. 
+```{r}
+ldahist(data = ldaPred$x[,1], g = data_test$type)
+```
+
+Create confusion matrix. 
+```{r}
+predClass = ldaPred$class
+predClass
+confusionTab = table(Predicted = predClass, Actual = data_test$type)
+confusionTab
+```
+
