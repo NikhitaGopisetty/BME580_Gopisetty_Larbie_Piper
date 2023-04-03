@@ -1,0 +1,99 @@
+---
+title: "Logistic Regression"
+author: "Michael Larbie"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+## Packages
+```{r setup, include=FALSE}
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(corrplot)
+library(utils)
+library(MASS)
+library(ROCR)
+library(caret)
+library(gmodels)
+library(class) # Knn algorithm
+library(patchwork)
+library(psych)
+
+set.seed(580)
+```
+
+## Load Data
+```{r}
+covid_train <- read_csv("training_data.csv")
+covid_train <- covid_train %>% dplyr::select(-...1)
+covid_test <- read_csv("testing_data.csv")
+covid_test <- covid_test %>% dplyr::select(-...1)
+```
+
+## Factor train
+```{r}
+covid_train$NATUSBORN_A <- as.factor(covid_train$NATUSBORN_A)
+covid_train$SEX_A <- as.factor(covid_train$NATUSBORN_A)
+covid_train$CVDDIAG_A <- as.factor(covid_train$CVDDIAG_A)
+covid_train$REGION <- as.factor(covid_train$REGION)
+covid_train$HYPEV_A <- as.factor(covid_train$HYPEV_A)
+covid_train$CHLEV_A <- as.factor(covid_train$CHLEV_A)
+covid_train$ASEV_A <- as.factor(covid_train$ASEV_A)
+covid_train$DIBEV_A <- as.factor(covid_train$DIBEV_A)
+covid_train$MEDNG12M_A <- as.factor(covid_train$MEDNG12M_A)
+covid_train$PAYWORRY_A <- as.factor(covid_train$PAYWORRY_A)
+covid_train$RACEALLP_A <- as.factor(covid_train$RACEALLP_A)
+covid_train$MEDRXTRT_A <- as.factor(covid_train$MEDRXTRT_A)
+covid_train$HLTHCOND_A <- as.factor(covid_train$HLTHCOND_A)
+covid_train$DEPEV_A <- as.factor(covid_train$DEPEV_A)
+```
+
+## Factor test
+```{r}
+covid_test$NATUSBORN_A <- as.factor(covid_test$NATUSBORN_A)
+covid_test$SEX_A <- as.factor(covid_test$NATUSBORN_A)
+covid_test$CVDDIAG_A <- as.factor(covid_test$CVDDIAG_A)
+covid_test$REGION <- as.factor(covid_test$REGION)
+covid_test$HYPEV_A <- as.factor(covid_test$HYPEV_A)
+covid_test$CHLEV_A <- as.factor(covid_test$CHLEV_A)
+covid_test$ASEV_A <- as.factor(covid_test$ASEV_A)
+covid_test$DIBEV_A <- as.factor(covid_test$DIBEV_A)
+covid_test$MEDNG12M_A <- as.factor(covid_test$MEDNG12M_A)
+covid_test$PAYWORRY_A <- as.factor(covid_test$PAYWORRY_A)
+covid_test$RACEALLP_A <- as.factor(covid_test$RACEALLP_A)
+covid_test$MEDRXTRT_A <- as.factor(covid_test$MEDRXTRT_A)
+covid_test$HLTHCOND_A <- as.factor(covid_test$HLTHCOND_A)
+covid_test$DEPEV_A <- as.factor(covid_test$DEPEV_A)
+```
+
+
+## Logistic Regression
+```{r}
+logr = glm(CVDDIAG_A ~., family = binomial, data = covid_train)
+
+summary(logr)
+```
+
+## Test data
+```{r}
+log.fit = predict(logr, newdata = covid_test, type='response')
+log.fit = ifelse(log.fit > 0.5, 1, 0)
+
+misclassification = sum(log.fit != covid_test$CVDDIAG_A)/
+  length(covid_test$CVDDIAG_A)
+misclassification
+
+accuracy = 1 - misclassification
+accuracy
+```
+
+## ROC
+```{r}
+predict <- prediction(log.fit, covid_test$CVDDIAG_A)
+perform <- performance(predict, "tpr", "fpr")
+plot(perform)
+area <- performance(predict, "auc")
+area@y.values[[1]]
+```
+
