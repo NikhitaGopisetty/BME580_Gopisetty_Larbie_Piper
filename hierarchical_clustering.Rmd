@@ -27,6 +27,7 @@ data_train$RACEALLP_A <- as.factor(data_train$RACEALLP_A)
 data_train$MEDRXTRT_A <- as.factor(data_train$MEDRXTRT_A)
 data_train$HLTHCOND_A <- as.factor(data_train$HLTHCOND_A)
 data_train$DEPEV_A <- as.factor(data_train$DEPEV_A)
+data_train$AGE <- as.factor(data_train$AGE)
 str(data_train)
 data_train <- data_train %>% 
   select(-X)
