@@ -28,22 +28,45 @@ data_train$RACEALLP_A <- as.factor(data_train$RACEALLP_A)
 data_train$MEDRXTRT_A <- as.factor(data_train$MEDRXTRT_A)
 data_train$HLTHCOND_A <- as.factor(data_train$HLTHCOND_A)
 data_train$DEPEV_A <- as.factor(data_train$DEPEV_A)
+data_train <- data_train %>% 
+  dplyr::select(-X)
 str(data_train)
 
 data_test = read.csv('testing_data.csv')
+data_test$NATUSBORN_A <- as.factor(data_test$NATUSBORN_A)
+data_test$SEX_A <- as.factor(data_test$NATUSBORN_A)
+data_test$CVDDIAG_A <- as.factor(data_test$CVDDIAG_A)
+data_test$REGION <- as.factor(data_test$REGION)
+data_test$HYPEV_A <- as.factor(data_test$HYPEV_A)
+data_test$CHLEV_A <- as.factor(data_test$CHLEV_A)
+data_test$ASEV_A <- as.factor(data_test$ASEV_A)
+data_test$DIBEV_A <- as.factor(data_test$DIBEV_A)
+data_test$MEDNG12M_A <- as.factor(data_test$MEDNG12M_A)
+data_test$PAYWORRY_A <- as.factor(data_test$PAYWORRY_A)
+data_test$RACEALLP_A <- as.factor(data_test$RACEALLP_A)
+data_test$MEDRXTRT_A <- as.factor(data_test$MEDRXTRT_A)
+data_test$HLTHCOND_A <- as.factor(data_test$HLTHCOND_A)
+data_test$DEPEV_A <- as.factor(data_test$DEPEV_A)
+data_test = data_test %>% 
+  dplyr::select(-X)
+str(data_test)
 ```
 
 Create LDA model. 
 ```{r}
-ldaMod = lda(x ~., data = data_train)
+ldaMod = lda(CVDDIAG_A ~., data = data_train)
 ldaMod
+
+misclassification = sum(ldaMod != data_test$CVDDIAG_A)/
+  length(data_test$CVDDIAG_A)
+misclassification
 
 ldaPred = predict(ldaMod, data_test)
 ```
 
 Create histogram of scores of each observation in the first linear discrimminant. 
 ```{r}
-ldahist(data = ldaPred$x[,1], g = data_test$type)
+ldahist(data = ldaPred$x[,1], g = data_test$CVDDIAG_A)
 ```
 
 Create confusion matrix. 
