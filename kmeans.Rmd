@@ -12,6 +12,24 @@ library(factoextra)
 
 ```{r}
 training_data <- read.csv('training_data.csv')
+training_data <- training_data %>% 
+  select(-X)
+training_data$NATUSBORN_A <- as.factor(training_data$NATUSBORN_A)
+training_data$SEX_A <- as.factor(training_data$NATUSBORN_A)
+training_data$CVDDIAG_A <- as.factor(training_data$CVDDIAG_A)
+training_data$REGION <- as.factor(training_data$REGION)
+training_data$HYPEV_A <- as.factor(training_data$HYPEV_A)
+training_data$CHLEV_A <- as.factor(training_data$CHLEV_A)
+training_data$ASEV_A <- as.factor(training_data$ASEV_A)
+training_data$DIBEV_A <- as.factor(training_data$DIBEV_A)
+training_data$MEDNG12M_A <- as.factor(training_data$MEDNG12M_A)
+training_data$PAYWORRY_A <- as.factor(training_data$PAYWORRY_A)
+training_data$RACEALLP_A <- as.factor(training_data$RACEALLP_A)
+training_data$DXRESP_A <- as.factor(training_data$DXRESP_A)
+training_data$MEDRXTRT_A <- as.factor(training_data$MEDRXTRT_A)
+training_data$HLTHCOND_A <- as.factor(training_data$HLTHCOND_A)
+training_data$DEPEV_A <- as.factor(training_data$DEPEV_A)
+str(training_data)
 x <- training_data %>% select(-CVDDIAG_A)
 y <- training_data$CVDDIAG_A
 ```
