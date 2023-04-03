@@ -19,9 +19,9 @@ raw_data <- read_csv('data/adult21.csv')
 ```
 ```{r select columns}
 data_select <- raw_data %>%
-  select(REGION, SEX_A, CVDDIAG_A, NATUSBORN_A, RACEALLP_A, MEDNG12M_A,
+  dplyr::select(REGION, SEX_A, CVDDIAG_A, NATUSBORN_A, RACEALLP_A, MEDNG12M_A,
          PAYWORRY_A, DIBEV_A, ASEV_A, CHLEV_A, HYPEV_A, MEDRXTRT_A,
-         HLTHCOND_A, DXRESP_A, SMKNOW_A, DEPEV_A) %>% 
+         HLTHCOND_A, DEPEV_A) %>% 
   filter(SEX_A == 1 | SEX_A == 2,
          CVDDIAG_A == 1 | CVDDIAG_A == 2, 
          NATUSBORN_A == 1 | NATUSBORN_A == 2,
@@ -42,30 +42,48 @@ data <- drop_na(data_select)
 str(data)
 ```
 
-```{r factor}
-data$NATUSBORN_A <- as.factor(data$NATUSBORN_A)
-data$CVDDIAG_A <- as.factor(data$CVDDIAG_A)
-data$REGION <- as.factor(data$REGION)
-data$HYPEV_A <- as.factor(data$HYPEV_A)
-data$CHLEV_A <- as.factor(data$CHLEV_A)
-data$ASEV_A <- as.factor(data$ASEV_A)
-data$DIBEV_A <- as.factor(data$DIBEV_A)
-data$MEDNG12M_A <- as.factor(data$MEDNG12M_A)
-data$PAYWORRY_A <- as.factor(data$PAYWORRY_A)
-data$RACEALLP_A <- as.factor(data$RACEALLP_A)
-data$DXRESP_A <- as.factor(data$DXRESP_A)
-data$MEDRXTRT_A <- as.factor(data$MEDRXTRT_A)
-data$HLTHCOND_A <- as.factor(data$HLTHCOND_A)
-data$DEPEV_A <- as.factor(data$DEPEV_A)
-str(data)
-```
-
 ```{r split data}
 data_split <- createDataPartition(data$CVDDIAG_A, p = 0.8, list = FALSE)
 data_train <- data[data_split,]
 data_test <- data[-data_split,]
 dim(data_train)
 dim(data_test)
+```
+
+```{r factor}
+data_train$NATUSBORN_A <- as.factor(data_train$NATUSBORN_A)
+data_train$SEX_A <- as.factor(data_train$NATUSBORN_A)
+data_train$CVDDIAG_A <- as.factor(data_train$CVDDIAG_A)
+data_train$REGION <- as.factor(data_train$REGION)
+data_train$HYPEV_A <- as.factor(data_train$HYPEV_A)
+data_train$CHLEV_A <- as.factor(data_train$CHLEV_A)
+data_train$ASEV_A <- as.factor(data_train$ASEV_A)
+data_train$DIBEV_A <- as.factor(data_train$DIBEV_A)
+data_train$MEDNG12M_A <- as.factor(data_train$MEDNG12M_A)
+data_train$PAYWORRY_A <- as.factor(data_train$PAYWORRY_A)
+data_train$RACEALLP_A <- as.factor(data_train$RACEALLP_A)
+data_train$MEDRXTRT_A <- as.factor(data_train$MEDRXTRT_A)
+data_train$HLTHCOND_A <- as.factor(data_train$HLTHCOND_A)
+data_train$DEPEV_A <- as.factor(data_train$DEPEV_A)
+str(data_train)
+```
+
+```{r factor}
+data_test$NATUSBORN_A <- as.factor(data_test$NATUSBORN_A)
+data_test$SEX_A <- as.factor(data_test$NATUSBORN_A)
+data_test$CVDDIAG_A <- as.factor(data_test$CVDDIAG_A)
+data_test$REGION <- as.factor(data_test$REGION)
+data_test$HYPEV_A <- as.factor(data_test$HYPEV_A)
+data_test$CHLEV_A <- as.factor(data_test$CHLEV_A)
+data_test$ASEV_A <- as.factor(data_test$ASEV_A)
+data_test$DIBEV_A <- as.factor(data_test$DIBEV_A)
+data_test$MEDNG12M_A <- as.factor(data_test$MEDNG12M_A)
+data_test$PAYWORRY_A <- as.factor(data_test$PAYWORRY_A)
+data_test$RACEALLP_A <- as.factor(data_test$RACEALLP_A)
+data_test$MEDRXTRT_A <- as.factor(data_test$MEDRXTRT_A)
+data_test$HLTHCOND_A <- as.factor(data_test$HLTHCOND_A)
+data_test$DEPEV_A <- as.factor(data_test$DEPEV_A)
+str(data_test)
 ```
 
 ```{r export data}

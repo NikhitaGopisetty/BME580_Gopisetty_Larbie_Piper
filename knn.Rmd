@@ -8,6 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 library(tidyverse)
 library(ggplot2)
+library(plyr)
 library(corrplot)
 library(utils)
 library(MASS)
@@ -25,9 +26,105 @@ testing_data <- read.csv('testing_data.csv')
 ```
 
 ```{r}
+training_data <- training_data %>% 
+  dplyr::select(-X)
+training_data$NATUSBORN_A <- as.factor(training_data$NATUSBORN_A)
+training_data$SEX_A <- as.factor(training_data$NATUSBORN_A)
+training_data$CVDDIAG_A <- as.factor(training_data$CVDDIAG_A)
+training_data$REGION <- as.factor(training_data$REGION)
+training_data$HYPEV_A <- as.factor(training_data$HYPEV_A)
+training_data$CHLEV_A <- as.factor(training_data$CHLEV_A)
+training_data$ASEV_A <- as.factor(training_data$ASEV_A)
+training_data$DIBEV_A <- as.factor(training_data$DIBEV_A)
+training_data$MEDNG12M_A <- as.factor(training_data$MEDNG12M_A)
+training_data$PAYWORRY_A <- as.factor(training_data$PAYWORRY_A)
+training_data$RACEALLP_A <- as.factor(training_data$RACEALLP_A)
+training_data$MEDRXTRT_A <- as.factor(training_data$MEDRXTRT_A)
+training_data$HLTHCOND_A <- as.factor(training_data$HLTHCOND_A)
+training_data$DEPEV_A <- as.factor(training_data$DEPEV_A)
+str(training_data)
+```
+
+```{r}
+testing_data <- testing_data %>% 
+  dplyr::select(-X)
+testing_data$NATUSBORN_A <- as.factor(testing_data$NATUSBORN_A)
+testing_data$SEX_A <- as.factor(testing_data$NATUSBORN_A)
+testing_data$CVDDIAG_A <- as.factor(testing_data$CVDDIAG_A)
+testing_data$REGION <- as.factor(testing_data$REGION)
+testing_data$HYPEV_A <- as.factor(testing_data$HYPEV_A)
+testing_data$CHLEV_A <- as.factor(testing_data$CHLEV_A)
+testing_data$ASEV_A <- as.factor(testing_data$ASEV_A)
+testing_data$DIBEV_A <- as.factor(testing_data$DIBEV_A)
+testing_data$MEDNG12M_A <- as.factor(testing_data$MEDNG12M_A)
+testing_data$PAYWORRY_A <- as.factor(testing_data$PAYWORRY_A)
+testing_data$RACEALLP_A <- as.factor(testing_data$RACEALLP_A)
+testing_data$MEDRXTRT_A <- as.factor(testing_data$MEDRXTRT_A)
+testing_data$HLTHCOND_A <- as.factor(testing_data$HLTHCOND_A)
+testing_data$DEPEV_A <- as.factor(testing_data$DEPEV_A)
+str(testing_data)
+```
+
+```{r}
 knn_model = knn(training_data, testing_data, cl = training_data$CVDDIAG_A, k=2)
 tab_knn = table(knn_model, testing_data$CVDDIAG_A)
 
 (tab_knn[2] + tab_knn[3]) / (tab_knn[1] + tab_knn[2] + tab_knn[3] + tab_knn[4])
 tab_knn
 ```
+
+```{r}
+precision <- tab_knn[1] / (tab_knn[1] + tab_knn[3])
+error_rate <- (tab_knn[2] + tab_knn[3]) / (tab_knn[1] + tab_knn[2] + tab_knn[3] + tab_knn[4])
+accuracy <- 1 - error_rate
+sensitivity <- tab_knn[4] / (tab_knn[3] + tab_knn[4])
+
+cat("Precision:", precision, "\n")
+cat("Accuracy:", accuracy, "\n")
+cat("Error Rate:", error_rate, "\n")
+cat("Sensitivity:", sensitivity)
+```
+
+
+```{r}
+accuracy = function(actual, predicted) {
+  mean(actual == predicted)
+}
+
+accuracy(actual = testing_data$CVDDIAG_A,
+         predicted = knn(train = training_data, 
+                         test = testing_data, 
+                         cl = training_data$CVDDIAG_A, k = 2))
+
+```
+
+```{r}
+set.seed(42)
+k_to_try = 1:10
+acc_k = rep(x = 0, times = length(k_to_try))
+
+accuracy = function(actual, predicted) {
+  mean(actual == predicted)
+}
+
+for(i in seq_along(k_to_try)) {
+  pred = knn(train = training_data, 
+             test = testing_data, 
+             cl = training_data$CVDDIAG_A, 
+             k = k_to_try[i])
+  acc_k[i] = accuracy(testing_data$CVDDIAG_A, pred)
+}
+```
+```{r}
+# plot accuracy vs choice of k
+plot(acc_k, type = "b", col = "dodgerblue", cex = 1, pch = 20, 
+     xlab = "k, number of neighbors", ylab = "classification accuracy",
+     main = "Accuracy vs Neighbors")
+# add lines indicating k with best accuracy
+abline(v = which(acc_k == max(acc_k)), col = "darkorange", lwd = 1.5)
+# add line for max accuracy seen
+abline(h = max(acc_k), col = "grey", lty = 2)
+# add line for prevalence in test set
+abline(h = mean(testing_data$CVDDIAG_A == "2"), col = "grey", lty = 2)
+```
+
