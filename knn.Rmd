@@ -42,6 +42,7 @@ training_data$RACEALLP_A <- as.factor(training_data$RACEALLP_A)
 training_data$MEDRXTRT_A <- as.factor(training_data$MEDRXTRT_A)
 training_data$HLTHCOND_A <- as.factor(training_data$HLTHCOND_A)
 training_data$DEPEV_A <- as.factor(training_data$DEPEV_A)
+training_data$AGE <- as.factor(training_data$AGE)
 str(training_data)
 ```
 
@@ -62,6 +63,7 @@ testing_data$RACEALLP_A <- as.factor(testing_data$RACEALLP_A)
 testing_data$MEDRXTRT_A <- as.factor(testing_data$MEDRXTRT_A)
 testing_data$HLTHCOND_A <- as.factor(testing_data$HLTHCOND_A)
 testing_data$DEPEV_A <- as.factor(testing_data$DEPEV_A)
+testing_data$AGE <- as.factor(testing_data$AGE)
 str(testing_data)
 ```
 
