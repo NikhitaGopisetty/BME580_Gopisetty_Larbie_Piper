@@ -1,0 +1,14 @@
+---
+title: "hierarchical_clustering"
+author: "Sarah Piper"
+date: "2023-04-01"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(factoextra)
+```
+
+```{r}
+training_data = read.csv('training_data.csv')
