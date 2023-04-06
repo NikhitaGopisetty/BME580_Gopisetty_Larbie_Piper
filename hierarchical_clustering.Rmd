@@ -30,9 +30,9 @@ data_train$DEPEV_A <- as.factor(data_train$DEPEV_A)
 data_train$AGE <- as.factor(data_train$AGE)
 str(data_train)
 data_train <- data_train %>% 
-  select(-X)
+  dplyr::select(-X)
 
-x = data_train %>% select(-CVDDIAG_A)
+x = data_train %>% dplyr::select(-CVDDIAG_A)
 y = data_train$CVDDIAG_A
 ```
 

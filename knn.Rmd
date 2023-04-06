@@ -130,3 +130,20 @@ abline(h = max(acc_k), col = "grey", lty = 2)
 abline(h = mean(testing_data$CVDDIAG_A == "2"), col = "grey", lty = 2)
 ```
 
+
+
+```{r}
+ggplot(training_data, aes(x = AGE, y = REGION, color = CVDDIAG_A)) +
+  geom_point(position='jitter')
+```
+
+```{r}
+training_data %>%
+  dplyr::select(AGE, REGION, CVDDIAG_A) %>%
+  group_by(AGE, REGION, CVDDIAG_A) %>%
+  dplyr::count() %>%
+  group_by(AGE) %>%
+  mutate(total = sum(n)) %>%
+  mutate(percentage = n / total)
+```
+
