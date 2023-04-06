@@ -73,7 +73,7 @@ str(testing_data)
 
 decision tree
 ```{r}
-train.tree = tree::tree(CVDDIAG_A~., data = training_data, )
+train.tree = tree::tree(CVDDIAG_A~., data = training_data)
 summary(train.tree)
 plot(train.tree)
 text(train.tree, pretty = 0)

@@ -75,7 +75,7 @@ Create confusion matrix.
 ```{r}
 predClass = ldaPred$class
 predClass
-confusionTab = table(Predicted = predClass, Actual = data_test$type)
+confusionTab = table(Predicted = predClass, Actual = data_test$CVDDIAG_A)
 confusionTab
 ```
 
