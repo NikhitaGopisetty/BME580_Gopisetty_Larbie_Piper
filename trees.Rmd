@@ -73,6 +73,47 @@ str(testing_data)
 
 decision tree
 ```{r}
+class_weights <- table(training_data$CVDDIAG_A)/nrow(training_data)
+model_weights <- ifelse(training_data$CVDDIAG_A == 1,
+                        (1/table(training_data$CVDDIAG_A)[1]) * 0.5,
+                        (1/table(training_data$CVDDIAG_A)[2]) * 0.5)
+
+model <- caret::train(CVDDIAG_A ~ ., data = training_data, method = "rpart",
+               trControl = trainControl(method = "cv"),
+               metric = "Accuracy",
+               weights = model_weights)
+
+tree <- model$finalModel
+predictions <- predict(model, newdata = testing_data)
+
+confusionMatrix(predictions, testing_data$CVDDIAG_A)
+
+prp(model$finalModel)
+
+pruned_model <- prune(tree, cp=0.00085)
+prp(pruned_model)
+
+tree_pred <- predict(pruned_model, newdata = testing_data)
+
+# Create a confusion matrix
+confusionMatrix(tree_pred, testing_data$CVDDIAG_A)
+
+#design_matrix <- model.matrix(CVDDIAG_A ~ ., data = testing_data)
+#used_vars <- colnames(design_matrix)[which(apply(design_matrix, 2, function(x) sum(x != 0)) > 0)]
+
+#pruned_preds <- predict(pruned_model, newdata = testing_data[used_vars, ])
+#confusionMatrix(data = pruned_preds, reference = testing_data$CVDDIAG_A)
+
+
+#treePred = predict(pruned_model, testing_data, type='class')
+#confusionTab = table(Predicted = treePred, Actual = testing_data$CVDDIAG_A)
+#confusionTab
+
+```
+
+
+
+```{r}
 train.tree = tree::tree(CVDDIAG_A~., data = training_data)
 summary(train.tree)
 plot(train.tree)
@@ -90,10 +131,10 @@ rpart.plot(tree)
 ```
 
 ```{r}
-cv.data.tree = cv.tree(train.tree, FUN = prune.misclass)
-plot(cv.data.tree)
+#cv.data.tree = cv.tree(train.tree, FUN = prune.misclass)
+#plot(cv.data.tree)
 
-prune.data = prune.misclass(train.tree, best = 4)
+prune.data = prune.misclass(tree, best = 4)
 plot(prune.data)
 text(prune.data, pretty = 0)
 
@@ -104,6 +145,23 @@ confusionTab2
 
 
 Random Forest
+```{r}
+rf_model <- randomForest(CVDDIAG_A ~ ., data = training_data, weights = model_weights, classwt = class_weights)
+
+# Make predictions on the test set
+pred <- predict(rf_model, testing_data)
+
+# Create a confusion matrix
+confusionMatrix(pred, testing_data$CVDDIAG_A)
+
+plot(rf_model)
+```
+
+
+
+
+
+
 ```{r}
 rf.data = randomForest(CVDDIAG_A~., data = training_data, mtry = sqrt(14), ntree = 500)
 rf.data
