@@ -10,5 +10,103 @@ library(tidyverse)
 library(factoextra)
 ```
 
+Upload data. 
 ```{r}
-training_data = read.csv('training_data.csv')
+data_train = read.csv('training_data.csv')
+data_train$NATUSBORN_A <- as.factor(data_train$NATUSBORN_A)
+data_train$SEX_A <- as.factor(data_train$NATUSBORN_A)
+data_train$CVDDIAG_A <- as.factor(data_train$CVDDIAG_A)
+data_train$REGION <- as.factor(data_train$REGION)
+data_train$HYPEV_A <- as.factor(data_train$HYPEV_A)
+data_train$CHLEV_A <- as.factor(data_train$CHLEV_A)
+data_train$ASEV_A <- as.factor(data_train$ASEV_A)
+data_train$DIBEV_A <- as.factor(data_train$DIBEV_A)
+data_train$MEDNG12M_A <- as.factor(data_train$MEDNG12M_A)
+data_train$PAYWORRY_A <- as.factor(data_train$PAYWORRY_A)
+data_train$RACEALLP_A <- as.factor(data_train$RACEALLP_A)
+data_train$MEDRXTRT_A <- as.factor(data_train$MEDRXTRT_A)
+data_train$HLTHCOND_A <- as.factor(data_train$HLTHCOND_A)
+data_train$DEPEV_A <- as.factor(data_train$DEPEV_A)
+data_train$AGE <- as.factor(data_train$AGE)
+str(data_train)
+data_train <- data_train %>% 
+  dplyr::select(-X)
+
+x = data_train %>% dplyr::select(-CVDDIAG_A)
+y = data_train$CVDDIAG_A
+```
+
+Created dissimilarity matrix. 
+
+Lots of variables so hard to read what exactly is correlated to one another and what is not. 
+```{r}
+dist = dist(x, method = 'euclidean')
+fviz_dist(dist)
+```
+
+Built dendrogram for dissimilarity matrix above. 
+
+Used method less susceptible to noise and outliers 
+```{r}
+hcl = hclust(dist, method='complete')
+plot(hcl, cex = 0.6, hang = -1)
+```
+
+Tried multiple different k's for cluster size. 
+```{r}
+plot(hcl, cex = 0.6, hang = -1)
+rect.hclust(hcl, k=2, border = 'red')
+cutHcl2 = cutree(hcl, k=2)
+clusterTab2 = table(cutHcl2, y)
+clusterTab2
+
+plot(hcl, cex = 0.6, hang = -1)
+rect.hclust(hcl, k=3, border = 'red')
+cutHcl3 = cutree(hcl, k=3)
+clusterTab3 = table(cutHcl3, y)
+clusterTab3
+
+plot(hcl, cex = 0.6, hang = -1)
+rect.hclust(hcl, k=4, border = 'red')
+cutHcl4 = cutree(hcl, k=4)
+clusterTab4 = table(cutHcl4, y)
+clusterTab4
+
+plot(hcl, cex = 0.6, hang = -1)
+rect.hclust(hcl, k=5, border = 'red')
+cutHcl5 = cutree(hcl, k=5)
+clusterTab5 = table(cutHcl5, y)
+clusterTab5
+
+plot(hcl, cex = 0.6, hang = -1)
+rect.hclust(hcl, k=6, border = 'red')
+cutHcl6 = cutree(hcl, k=6)
+clusterTab6 = table(cutHcl6, y)
+clusterTab6
+
+plot(hcl, cex = 0.6, hang = -1)
+rect.hclust(hcl, k=7, border = 'red')
+cutHcl7 = cutree(hcl, k=7)
+clusterTab7 = table(cutHcl7, y)
+clusterTab7
+
+plot(hcl, cex = 0.6, hang = -1)
+rect.hclust(hcl, k=8, border = 'red')
+cutHcl8 = cutree(hcl, k=8)
+clusterTab8 = table(cutHcl8, y)
+clusterTab8
+
+plot(hcl, cex = 0.6, hang = -1)
+rect.hclust(hcl, k=9, border = 'red')
+cutHcl9 = cutree(hcl, k=9)
+clusterTab9 = table(cutHcl9, y)
+clusterTab9
+
+plot(hcl, cex = 0.6, hang = -1)
+rect.hclust(hcl, k=10, border = 'red')
+cutHcl10 = cutree(hcl, k=10)
+clusterTab10 = table(cutHcl10, y)
+clusterTab10
+```
+
+

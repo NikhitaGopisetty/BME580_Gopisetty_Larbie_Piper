@@ -42,6 +42,7 @@ training_data$RACEALLP_A <- as.factor(training_data$RACEALLP_A)
 training_data$MEDRXTRT_A <- as.factor(training_data$MEDRXTRT_A)
 training_data$HLTHCOND_A <- as.factor(training_data$HLTHCOND_A)
 training_data$DEPEV_A <- as.factor(training_data$DEPEV_A)
+training_data$AGE <- as.factor(training_data$AGE)
 str(training_data)
 ```
 
@@ -62,6 +63,7 @@ testing_data$RACEALLP_A <- as.factor(testing_data$RACEALLP_A)
 testing_data$MEDRXTRT_A <- as.factor(testing_data$MEDRXTRT_A)
 testing_data$HLTHCOND_A <- as.factor(testing_data$HLTHCOND_A)
 testing_data$DEPEV_A <- as.factor(testing_data$DEPEV_A)
+testing_data$AGE <- as.factor(testing_data$AGE)
 str(testing_data)
 ```
 
@@ -126,5 +128,58 @@ abline(v = which(acc_k == max(acc_k)), col = "darkorange", lwd = 1.5)
 abline(h = max(acc_k), col = "grey", lty = 2)
 # add line for prevalence in test set
 abline(h = mean(testing_data$CVDDIAG_A == "2"), col = "grey", lty = 2)
+```
+
+```{r}
+boundary <- function(model, data, class = NULL, predict_type = "class",
+  resolution = 100, showgrid = TRUE, ...) {
+
+  if(!is.null(class)) cl <- data[,class] else cl <- 1
+  data <- data[,1:2]
+  k <- length(unique(cl))
+
+  plot(data, col = as.integer(cl)+1L, pch = as.integer(cl)+1L, ...)
+
+  # make grid
+  r <- sapply(data, range, na.rm = TRUE)
+  xs <- seq(r[1,1], r[2,1], length.out = resolution)
+  ys <- seq(r[1,2], r[2,2], length.out = resolution)
+  g <- cbind(rep(xs, each=resolution), rep(ys, time = resolution))
+  colnames(g) <- colnames(r)
+  g <- as.data.frame(g)
+
+  ### guess how to get class labels from predict
+  ### (unfortunately not very consistent between models)
+  p <- predict(model, g, type = predict_type)
+  if(is.list(p)) p <- p$class
+  p <- as.factor(p)
+
+  if(showgrid) points(g, col = as.integer(p)+1L, pch = ".")
+
+  z <- matrix(as.integer(p), nrow = resolution, byrow = TRUE)
+  contour(xs, ys, z, add = TRUE, drawlabels = FALSE,
+    lwd = 2, levels = (1:(k-1))+.5)
+
+  invisible(z)
+}
+
+
+
+```
+
+
+```{r}
+ggplot(training_data, aes(x = AGE, y = REGION, color = CVDDIAG_A)) +
+  geom_point(position='jitter')
+```
+
+```{r}
+training_data %>%
+  dplyr::select(AGE, REGION, CVDDIAG_A) %>%
+  group_by(AGE, REGION, CVDDIAG_A) %>%
+  dplyr::count() %>%
+  group_by(AGE) %>%
+  mutate(total = sum(n)) %>%
+  mutate(percentage = n / total)
 ```
 

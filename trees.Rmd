@@ -1,0 +1,189 @@
+---
+title: "trees"
+author: "Nikhita Gopisetty"
+date: "2023-04-05"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+library(corrplot)
+library(utils)
+library(MASS)
+library(tree)
+library(randomForest)
+library(ROCR)
+library(caret)
+library(gmodels)
+library(class) # Knn algorithm
+library(patchwork)
+library(psych)
+library(rpart)
+library(rpart.plot)
+```
+
+```{r}
+training_data <- read.csv('training_data.csv')
+testing_data <- read.csv('testing_data.csv')
+```
+
+```{r}
+training_data <- training_data %>% 
+  dplyr::select(-X)
+training_data$NATUSBORN_A <- as.factor(training_data$NATUSBORN_A)
+training_data$SEX_A <- as.factor(training_data$NATUSBORN_A)
+training_data$CVDDIAG_A <- as.factor(training_data$CVDDIAG_A)
+training_data$REGION <- as.factor(training_data$REGION)
+training_data$HYPEV_A <- as.factor(training_data$HYPEV_A)
+training_data$CHLEV_A <- as.factor(training_data$CHLEV_A)
+training_data$ASEV_A <- as.factor(training_data$ASEV_A)
+training_data$DIBEV_A <- as.factor(training_data$DIBEV_A)
+training_data$MEDNG12M_A <- as.factor(training_data$MEDNG12M_A)
+training_data$PAYWORRY_A <- as.factor(training_data$PAYWORRY_A)
+training_data$RACEALLP_A <- as.factor(training_data$RACEALLP_A)
+training_data$MEDRXTRT_A <- as.factor(training_data$MEDRXTRT_A)
+training_data$HLTHCOND_A <- as.factor(training_data$HLTHCOND_A)
+training_data$DEPEV_A <- as.factor(training_data$DEPEV_A)
+training_data$AGE <- as.factor(training_data$AGE)
+str(training_data)
+```
+
+```{r}
+testing_data <- testing_data %>% 
+  dplyr::select(-X)
+testing_data$NATUSBORN_A <- as.factor(testing_data$NATUSBORN_A)
+testing_data$SEX_A <- as.factor(testing_data$NATUSBORN_A)
+testing_data$CVDDIAG_A <- as.factor(testing_data$CVDDIAG_A)
+testing_data$REGION <- as.factor(testing_data$REGION)
+testing_data$HYPEV_A <- as.factor(testing_data$HYPEV_A)
+testing_data$CHLEV_A <- as.factor(testing_data$CHLEV_A)
+testing_data$ASEV_A <- as.factor(testing_data$ASEV_A)
+testing_data$DIBEV_A <- as.factor(testing_data$DIBEV_A)
+testing_data$MEDNG12M_A <- as.factor(testing_data$MEDNG12M_A)
+testing_data$PAYWORRY_A <- as.factor(testing_data$PAYWORRY_A)
+testing_data$RACEALLP_A <- as.factor(testing_data$RACEALLP_A)
+testing_data$MEDRXTRT_A <- as.factor(testing_data$MEDRXTRT_A)
+testing_data$HLTHCOND_A <- as.factor(testing_data$HLTHCOND_A)
+testing_data$DEPEV_A <- as.factor(testing_data$DEPEV_A)
+testing_data$AGE <- as.factor(testing_data$AGE)
+str(testing_data)
+```
+
+decision tree
+```{r}
+class_weights <- table(training_data$CVDDIAG_A)/nrow(training_data)
+model_weights <- ifelse(training_data$CVDDIAG_A == 1,
+                        (1/table(training_data$CVDDIAG_A)[1]) * 0.5,
+                        (1/table(training_data$CVDDIAG_A)[2]) * 0.5)
+
+model <- caret::train(CVDDIAG_A ~ ., data = training_data, method = "rpart",
+               trControl = trainControl(method = "cv"),
+               metric = "Accuracy",
+               weights = model_weights)
+
+tree <- model$finalModel
+predictions <- predict(model, newdata = testing_data)
+
+confusionMatrix(predictions, testing_data$CVDDIAG_A)
+
+prp(model$finalModel)
+
+pruned_model <- prune(tree, cp=0.00085)
+prp(pruned_model)
+
+tree_pred <- predict(pruned_model, newdata = testing_data)
+
+# Create a confusion matrix
+confusionMatrix(tree_pred, testing_data$CVDDIAG_A)
+
+#design_matrix <- model.matrix(CVDDIAG_A ~ ., data = testing_data)
+#used_vars <- colnames(design_matrix)[which(apply(design_matrix, 2, function(x) sum(x != 0)) > 0)]
+
+#pruned_preds <- predict(pruned_model, newdata = testing_data[used_vars, ])
+#confusionMatrix(data = pruned_preds, reference = testing_data$CVDDIAG_A)
+
+
+#treePred = predict(pruned_model, testing_data, type='class')
+#confusionTab = table(Predicted = treePred, Actual = testing_data$CVDDIAG_A)
+#confusionTab
+
+```
+
+
+
+```{r}
+train.tree = tree::tree(CVDDIAG_A~., data = training_data)
+summary(train.tree)
+plot(train.tree)
+text(train.tree, pretty = 0)
+```
+```{r}
+treePred = predict(train.tree, testing_data, type='class')
+confusionTab = table(Predicted = treePred, Actual = testing_data$CVDDIAG_A)
+confusionTab
+```
+
+```{r}
+tree <- rpart(CVDDIAG_A~., data = training_data)
+rpart.plot(tree)
+```
+
+```{r}
+#cv.data.tree = cv.tree(train.tree, FUN = prune.misclass)
+#plot(cv.data.tree)
+
+prune.data = prune.misclass(tree, best = 4)
+plot(prune.data)
+text(prune.data, pretty = 0)
+
+treePred2 = predict(prune.data, testing_data, type='class')
+confusionTab2 = table(Predicted = treePred2, Actual = testing_data$CVDDIAG_A)
+confusionTab2
+```
+
+
+Random Forest
+```{r}
+rf_model <- randomForest(CVDDIAG_A ~ ., data = training_data, weights = model_weights, classwt = class_weights)
+
+# Make predictions on the test set
+pred <- predict(rf_model, testing_data)
+
+# Create a confusion matrix
+confusionMatrix(pred, testing_data$CVDDIAG_A)
+
+plot(rf_model)
+```
+
+
+
+
+
+
+```{r}
+rf.data = randomForest(CVDDIAG_A~., data = training_data, mtry = sqrt(14), ntree = 500)
+rf.data
+
+rfPreds = predict(rf.data, testing_data)
+table(Predicted = rfPreds, Actual = testing_data$CVDDIAG_A)
+
+plot(rf.data)
+which.min(rf.data$err.rate)
+
+oob.err = double(7)
+test.err = double(7)
+```
+```{r}
+optRf = randomForest(CVDDIAG_A~., data = training_data, mtry = 4, ntree = 500)
+optPreds = predict(optRf, testing_data)
+opt_rf_acc = sum(ifelse(optPreds==testing_data$CVDDIAG_A, 1, 0)) / nrow(testing_data)
+table(Predicted = optPreds, Actual = testing_data$CVDDIAG_A)
+
+varImpPlot(optRf,
+           sort = T,
+           n.var=14,
+           main = 'Top Variables')
+```
+

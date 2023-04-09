@@ -47,6 +47,7 @@ covid_train$RACEALLP_A <- as.factor(covid_train$RACEALLP_A)
 covid_train$MEDRXTRT_A <- as.factor(covid_train$MEDRXTRT_A)
 covid_train$HLTHCOND_A <- as.factor(covid_train$HLTHCOND_A)
 covid_train$DEPEV_A <- as.factor(covid_train$DEPEV_A)
+covid_train$AGE <- as.factor(covid_train$AGE)
 ```
 
 ## Factor test
@@ -65,6 +66,7 @@ covid_test$RACEALLP_A <- as.factor(covid_test$RACEALLP_A)
 covid_test$MEDRXTRT_A <- as.factor(covid_test$MEDRXTRT_A)
 covid_test$HLTHCOND_A <- as.factor(covid_test$HLTHCOND_A)
 covid_test$DEPEV_A <- as.factor(covid_test$DEPEV_A)
+covid_test$AGE <- as.factor(covid_test$AGE)
 ```
 
 

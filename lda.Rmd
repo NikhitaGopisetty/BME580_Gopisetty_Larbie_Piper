@@ -1,0 +1,81 @@
+---
+title: "lda"
+author: "Sarah Piper"
+date: "2023-04-02"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(MASS) 
+library(tidyverse)
+library(caret) 
+library(corrplot)
+```
+
+```{r}
+data_train = read.csv('training_data.csv')
+data_train$NATUSBORN_A <- as.factor(data_train$NATUSBORN_A)
+data_train$SEX_A <- as.factor(data_train$NATUSBORN_A)
+data_train$CVDDIAG_A <- as.factor(data_train$CVDDIAG_A)
+data_train$REGION <- as.factor(data_train$REGION)
+data_train$HYPEV_A <- as.factor(data_train$HYPEV_A)
+data_train$CHLEV_A <- as.factor(data_train$CHLEV_A)
+data_train$ASEV_A <- as.factor(data_train$ASEV_A)
+data_train$DIBEV_A <- as.factor(data_train$DIBEV_A)
+data_train$MEDNG12M_A <- as.factor(data_train$MEDNG12M_A)
+data_train$PAYWORRY_A <- as.factor(data_train$PAYWORRY_A)
+data_train$RACEALLP_A <- as.factor(data_train$RACEALLP_A)
+data_train$MEDRXTRT_A <- as.factor(data_train$MEDRXTRT_A)
+data_train$HLTHCOND_A <- as.factor(data_train$HLTHCOND_A)
+data_train$DEPEV_A <- as.factor(data_train$DEPEV_A)
+data_train$AGE <- as.factor(data_train$AGE)
+data_train <- data_train %>% 
+  dplyr::select(-X)
+str(data_train)
+
+data_test = read.csv('testing_data.csv')
+data_test$NATUSBORN_A <- as.factor(data_test$NATUSBORN_A)
+data_test$SEX_A <- as.factor(data_test$NATUSBORN_A)
+data_test$CVDDIAG_A <- as.factor(data_test$CVDDIAG_A)
+data_test$REGION <- as.factor(data_test$REGION)
+data_test$HYPEV_A <- as.factor(data_test$HYPEV_A)
+data_test$CHLEV_A <- as.factor(data_test$CHLEV_A)
+data_test$ASEV_A <- as.factor(data_test$ASEV_A)
+data_test$DIBEV_A <- as.factor(data_test$DIBEV_A)
+data_test$MEDNG12M_A <- as.factor(data_test$MEDNG12M_A)
+data_test$PAYWORRY_A <- as.factor(data_test$PAYWORRY_A)
+data_test$RACEALLP_A <- as.factor(data_test$RACEALLP_A)
+data_test$MEDRXTRT_A <- as.factor(data_test$MEDRXTRT_A)
+data_test$HLTHCOND_A <- as.factor(data_test$HLTHCOND_A)
+data_test$DEPEV_A <- as.factor(data_test$DEPEV_A)
+data_test$AGE <- as.factor(data_test$AGE)
+data_test = data_test %>% 
+  dplyr::select(-X)
+str(data_test)
+```
+
+Create LDA model. 
+```{r}
+ldaMod = lda(CVDDIAG_A ~., data = data_train)
+ldaMod
+
+misclassification = sum(ldaMod != data_test$CVDDIAG_A)/
+  length(data_test$CVDDIAG_A)
+misclassification
+
+ldaPred = predict(ldaMod, data_test)
+```
+
+Create histogram of scores of each observation in the first linear discrimminant. 
+```{r}
+ldahist(data = ldaPred$x[,1], g = data_test$CVDDIAG_A)
+```
+
+Create confusion matrix. 
+```{r}
+predClass = ldaPred$class
+predClass
+confusionTab = table(Predicted = predClass, Actual = data_test$CVDDIAG_A)
+confusionTab
+```
+
