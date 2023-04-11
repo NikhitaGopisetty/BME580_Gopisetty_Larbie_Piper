@@ -36,7 +36,7 @@ data$PAYWORRY_A <- as.factor(data$PAYWORRY_A)
 data$FDSRUNOUT_A <- as.factor(data$FDSRUNOUT_A)
 data$RACEALLP_A <- as.factor(data$RACEALLP_A)
 
-data2 <- data %>% select(REGION, CVDDIAG_A, NATUSBORN_A, RACEALLP_A,MEDNG12M_A,
+data2 <- data %>% dplyr::select(REGION, CVDDIAG_A, NATUSBORN_A, RACEALLP_A,MEDNG12M_A,
                          PAYWORRY_A, FDSRUNOUT_A, DIBEV_A, ASEV_A, CHLEV_A,
                          HYPEV_A) %>% 
   filter(NATUSBORN_A == 1 | NATUSBORN_A == 2, MEDNG12M_A ==1 | MEDNG12M_A == 2,
@@ -63,7 +63,7 @@ data$CIGARCUR_A <- as.factor(data$CIGARCUR_A)
 data$ECIGNOW_A <- as.factor(data$ECIGNOW_A)
 data$DEPEV_A <- as.factor(data$DEPEV_A)
 
-data3 <- data %>% select(CVDDIAG_A, DXRESP_A, , MEDRXTRT_A, HLTHCOND_A, 
+data3 <- data %>% dplyr::select(CVDDIAG_A, DXRESP_A, , MEDRXTRT_A, HLTHCOND_A, 
                          SMKNOW_A, CIGARCUR_A, ECIGNOW_A, DEPEV_A) %>% 
   filter(CVDDIAG_A == 1 | CVDDIAG_A == 2, DXRESP_A == 1 | DXRESP_A == 2, 
          MEDRXTRT_A ==1 | MEDRXTRT_A == 2,
