@@ -19,6 +19,7 @@ library(gmodels)
 library(class) # Knn algorithm
 library(patchwork)
 library(psych)
+library(ROSE)
 
 set.seed(580)
 ```
@@ -69,18 +70,27 @@ covid_test$DEPEV_A <- as.factor(covid_test$DEPEV_A)
 covid_test$AGE <- as.factor(covid_test$AGE)
 ```
 
+```{r}
+table(covid_train$CVDDIAG_A)
+data_balanced_under <- ovun.sample(CVDDIAG_A ~ ., data = covid_train,
+                                  method = "under", N = 5188)$data
+table(data_balanced_under$CVDDIAG_A)
+contrasts(data_balanced_under$CVDDIAG_A)
+```
 
 ## Logistic Regression
 ```{r}
-logr = glm(CVDDIAG_A ~., family = binomial, data = covid_train)
-
-summary(logr)
+ct = data_balanced_under %>% dplyr::select(-NATUSBORN_A)
+logr2 = glm(CVDDIAG_A ~., family = "binomial", data = ct)
+summary(logr2)
 ```
 
 ## Test data
 ```{r}
-log.fit = predict(logr, newdata = covid_test, type='response')
-log.fit = ifelse(log.fit > 0.5, 1, 0)
+covid_test <- covid_test %>% dplyr::select(-NATUSBORN_A)
+log.fit = predict(logr2, newdata = covid_test, type='response')
+log.fit = ifelse(log.fit > 0.5, 1, 2)
+data.frame("preds" = log.fit, "ac" = covid_test$CVDDIAG_A)
 
 misclassification = sum(log.fit != covid_test$CVDDIAG_A)/
   length(covid_test$CVDDIAG_A)
@@ -98,4 +108,6 @@ plot(perform)
 area <- performance(predict, "auc")
 area@y.values[[1]]
 ```
+
+
 
