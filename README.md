@@ -67,4 +67,4 @@ In doing our analysis we used 15 of the variables. Those variables being:
 	2. 31 - 45
 	3. 46 - 60
 	4. 61 - 85
-	5. >85
+	5. 85+
